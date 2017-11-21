@@ -1,32 +1,62 @@
-# 3. Environments
+# 3. 环境
 
+<!--
 Having multiple environments for your application is essential for quality. Each environment serve a certain purpose and represents a state of your application in some way. When I talk about an environment I mean in which your application lives, that could be separate servers or virtual machines. Having multiple environments running on one machine is not an issue if they are separated but they must be it in some way to prevent them from interfering with eachother. If two of your environments are sharing the same database or cache, you could end up with unexpected results and even create bugs that didn't exist in the first place.
+-->
+为应用准备多个环境是非常必要的。每个环境有特定的用途，表明应用某个时间的状态。环境可以是单独的服务器，也可以是虚拟机。一台物理机器上搭建多个环境也是可以的，但是需要注意环境之间是分离的并且相互之间隔离开来。如果两个环境共享同一个数据库或者缓存系统，可能会导致问题。
 
-## 3.1 Repeatable
+## 3.1 可重复
 
+<!--
 Being told you're a "broken record" isn't fun but for your environments it's the best thing you could say. The most important thing to strive for with your environments is that they always have the same setup where operating system and software should be of the same version and have the same configuration. And in a best case scenario they are **repeatable through automation**.
+-->
+如果某个人被认为是"喋喋不休，重复一遍又一遍的"，那是很无趣的，但是对环境来说，这恰恰是最好的。一定要让不同的环境使用相同的操作系统和软件，版本号和配置文件都要一致。最好使用自动化工具来生成环境。
 
+<!--
 Many times have I encountered unexpected behaviour because of environments differing from each other. Some operating systems, CentOS for example, treat file names case sensitive while others like Ubuntu treat them case insensitive. This could end up with files not being read into your application. Another good example is how JSON is encoded/decoded; some environments will encode `0` to `"0"`. If your application is expecting an integer and will get a string then things can go wrong.
+-->
+很多时候遇到的问题都是由于环境之间的差异造成的。一些操作系统，比如CentOS,对文件名大小写敏感，但是Ubuntu对文件名大小写不敏感。这会导致应用读入文件的时候出问题。一些环境，在JSON编解码时，会将`0`编码为`"0"`，如果应用需要整数而不是字符串，就会出问题。
 
+<!--
 Knowing that your application will behave the same in your various environments is great because then you do not have to think about it. *Removing uncertainty* is important for gaining confidence in your deployment process.
+-->
+明确应用在不同的环境中行为是一致的非常重要。在部署过程中，一定要*去除不确定性*，这样会增添信心。
 
-### Server provisioning
+### 服务器配置
 
+<!--
 I said before that this topic is outside the scope of this book but I still want to touch briefly on it. If you want to achieve repeatability in your environments to the point where all your environments are all the same: you need it. Server provisioning is automating your environments. Say you're firing up a new virtual instance or installing a new server, what are your next steps? Often they are:
+-->
+前面的章节写到过这个主题超出了本书内容，但这里仍然进行简短的说明，为了保证环境的可重复，还是很重要的。使用自动化来配置服务器。加入有一个新的虚拟机或者一台新的服务器，接下来做什么了？通常的步骤是：
 
+<!--
 * Install software
 * Set configuration values for the software
 * Set up a service or application
 * Configure the service or application
 * Serve the service or application
+-->
+* 安装软件
+* 配置软件
+* 创建服务或应用
+* 配置服务或应用
+* 启动服务或应用
 
+<!--
 If you do this manually you will inevitably loose control of how to repeat it. Making sure that correct values are set in `php.ini` across all servers will never be maintainable if done in a manual fashion. The more environments you have, the tougher it will become. Need to update the file size upload limit on 78 server instances? Have fun. Perhaps get an intern.
+-->
+如果手工进行上面的步骤，在新的环境中操作时很可能出现失误。在所有的服务器上人工来确定`php.ini`文件中的参数是不可维护的。随着服务器的增多，情况会变得越来越糟。如果需要再78台服务器上更新上传文件大小限制的参数会怎么样了？简直是一个灾难。
 
+<!--
 There are a number of tools for server provisioning. The current most popular ones are [Chef](https://www.getchef.com/), [Puppet](http://puppetlabs.com/) and [Ansible](http://www.ansible.com/). The latter have gained a lot of traction lately. I suggest you read up on them and take a look at what problems they try to solve and how they solve them. They can help you with taking your deployment process to the next level.
+-->
+有很多工具来做服务器配置。当前最流行的是[Chef](https://www.getchef.com/), [Puppet](https://puppetlabs.com/) 和 [Ansible](https://www.ansible.com/)。建议读者关注一下这些项目，看看它们关注的问题以及解决问题的思路。这样可以帮助读者将部署流程提升到一个新的高度。
 
-## 3.2 Configuration / environment variables
-
+## 3.2 配置 / 环境变量
+<!--
 An important aspect of environments is configuring your application for the environment it's running in. Separation of code and configuration is a part of the [twelve-factor app](http://12factor.net/config) and it explains the importance of this separation as:
+-->
+环境的一个重要配置就是
 
 > Apps sometimes store config as constants in the code. This is a violation of twelve-factor, which requires strict separation of config from code. Config varies substantially across deploys, code does not.
 
